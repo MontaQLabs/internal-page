@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MontaQ Labs / Systems</title>
+    <title>MontaQ Labs / The Journey</title>
 
     <!-- Core Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -13,13 +13,13 @@
     <!-- Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@100;300;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@100;200;300;400&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --bg-color: #f7f3f0; /* Villa ivory */
-            --text-color: #000000;
-            --accent-color: #b08d57; /* Mediterranean gold */
+            --bg-color: #f8f6f2; /* Warm Villa Ivory */
+            --text-color: #1a1a1a;
+            --accent-color: #b08d57; /* Mediterranean Gold */
             --font-serif: 'Playfair Display', serif;
             --font-mono: 'JetBrains Mono', monospace;
         }
@@ -41,8 +41,8 @@
         }
 
         ::selection {
-            background: var(--text-color);
-            color: var(--bg-color);
+            background: var(--accent-color);
+            color: #fff;
         }
 
         /* Cinematic Noise Overlay */
@@ -51,17 +51,17 @@
             top: 0; left: 0; width: 100vw; height: 100vh;
             pointer-events: none;
             z-index: 9998;
-            opacity: 0.05;
-            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+            opacity: 0.06;
+            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
         }
 
         /* Custom Cursor */
         .cursor-dot {
-            position: fixed; width: 6px; height: 6px; background: var(--text-color); border-radius: 50%;
+            position: fixed; width: 5px; height: 5px; background: var(--text-color); border-radius: 50%;
             pointer-events: none; z-index: 10000; transform: translate(-50%, -50%);
         }
         .cursor-ring {
-            position: fixed; width: 40px; height: 40px; border: 1px solid rgba(0,0,0,0.2);
+            position: fixed; width: 45px; height: 45px; border: 1px solid rgba(176, 141, 87, 0.3);
             border-radius: 50%; pointer-events: none; z-index: 9999;
             transform: translate(-50%, -50%); transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1), height 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.4s;
             will-change: transform;
@@ -76,7 +76,7 @@
             pointer-events: none;
         }
 
-        /* Loader - Made Light */
+        /* Loader */
         .loader {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -89,37 +89,38 @@
         }
         .loader-percent {
             font-family: var(--font-serif);
-            font-size: 12vw;
+            font-size: 10vw;
             font-weight: 400;
             font-variant-numeric: tabular-nums;
             letter-spacing: -0.02em;
+            font-style: italic;
         }
 
         /* Header Navigation */
         .nav-top {
             position: fixed;
             top: 0; left: 0; width: 100vw;
-            padding: 3vw 4vw;
+            padding: 40px 60px;
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             z-index: 100;
             pointer-events: none;
         }
         .nav-top * { pointer-events: auto; }
         .brand-logo {
-            height: 32px;
+            height: 35px;
             display: block;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
         }
         .nav-meta {
             text-align: right;
-            font-size: 0.7vw;
+            font-size: 11px;
             line-height: 1.6;
-            letter-spacing: 0.15em;
+            letter-spacing: 0.2em;
             text-transform: uppercase;
             font-weight: 400;
             color: var(--text-color);
+            opacity: 0.6;
         }
 
         /* Main Scroll Layout */
@@ -128,140 +129,149 @@
             width: 100%;
             max-width: 1200px;
             margin: 0 auto;
-            padding-top: 30vh;
-            padding-bottom: 30vh;
+            padding-top: 35vh;
+            padding-bottom: 35vh;
             z-index: 10;
         }
 
         .list-item {
             display: block;
             position: relative;
-            padding: 4vh 0;
+            padding: 4.5vh 0;
             text-decoration: none;
             color: var(--text-color);
-            border-bottom: 1px solid rgba(0,0,0,0.08);
+            border-bottom: 1px solid rgba(0,0,0,0.06);
             margin: 0 4vw;
         }
 
         .item-num {
             position: absolute;
             left: 0;
-            top: 5.5vh;
-            font-size: 0.8vw;
+            top: 6.5vh;
+            font-size: 11px;
             opacity: 0.4;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.15em;
+            font-family: var(--font-mono);
         }
 
         .item-title {
             font-family: var(--font-serif);
-            font-size: 5.5vw;
+            font-size: 6vw;
             font-weight: 400;
-            margin-left: 5vw;
+            margin-left: 6vw;
             transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease, color 0.6s;
             transform-origin: left center;
             letter-spacing: -0.01em;
         }
 
         .list-item:hover .item-title {
-            transform: translateX(2vw);
+            transform: translateX(3vw);
             color: var(--accent-color);
+            font-style: italic;
         }
 
         .list-wrapper:hover .list-item:not(:hover) .item-title {
             opacity: 0.15;
         }
 
-        /* Detail Panel - Redesigned for clarity */
+        /* Detail Panel - Redesigned as a Poetic Sidebar */
         .fixed-detail {
             position: fixed;
             right: 5vw;
-            bottom: 5vh;
-            width: 25vw;
+            bottom: 6vh;
+            width: 28vw;
             display: flex;
             flex-direction: column;
-            gap: 2vh;
+            gap: 2.5vh;
             z-index: 20;
             pointer-events: none;
             background: rgba(255,255,255,0.4);
-            backdrop-filter: blur(10px);
-            padding: 30px;
-            border-radius: 4px;
-            border: 1px solid rgba(0,0,0,0.05);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.03);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 40px;
+            border: 1px solid rgba(255,255,255,0.6);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.04);
+            animation: panelFade 1.2s ease-out;
+        }
+
+        @keyframes panelFade {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .detail-label {
-            font-size: 0.6vw;
-            letter-spacing: 0.2em;
-            color: rgba(0,0,0,0.5);
+            font-size: 10px;
+            letter-spacing: 0.3em;
+            color: var(--accent-color);
             text-transform: uppercase;
+            font-weight: 600;
         }
 
         .detail-text {
-            font-size: 1vw;
+            font-family: var(--font-serif);
+            font-size: 1.4vw;
             line-height: 1.5;
-            font-weight: 300;
-            min-height: 8vh;
-            color: #333;
+            font-weight: 400;
+            min-height: 12vh;
+            color: #222;
         }
         
         .dull {
-            opacity: 0.4;
+            opacity: 0.3;
         }
 
         .launch-btn {
             align-self: flex-start;
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            font-size: 0.7vw;
+            gap: 15px;
+            font-size: 11px;
             color: #fff;
             background: var(--text-color);
-            padding: 12px 24px;
-            border-radius: 0; /* Brutalist villa feel */
+            padding: 16px 32px;
             text-decoration: none;
             opacity: 0;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateY(10px);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             pointer-events: auto;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.2em;
             text-transform: uppercase;
+            font-weight: 500;
         }
 
         .launch-btn:hover {
             background: var(--accent-color);
-            padding-right: 34px;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(176, 141, 87, 0.2);
         }
 
         /* Mobile Adjustments */
         @media (max-width: 1024px) {
-            .nav-meta { font-size: 1.5vw; }
-            .fixed-detail { width: 40vw; right: 4vw; bottom: 4vh; }
-            .detail-text { font-size: 1.8vw; }
-            .detail-label { font-size: 1.2vw; }
-            .launch-btn { font-size: 1.4vw; }
+            .nav-meta { font-size: 10px; }
+            .fixed-detail { width: 45vw; padding: 30px; }
+            .detail-text { font-size: 2.2vw; }
         }
 
         @media (max-width: 768px) {
             .cursor-dot, .cursor-ring { display: none !important; }
             * { cursor: auto !important; }
-            .nav-meta { font-size: 10px; }
+            .nav-top { padding: 25px 30px; }
             .fixed-detail { 
                 position: relative;
                 width: calc(100% - 8vw);
                 right: auto;
                 bottom: auto;
-                margin: 0 4vw 10vh 4vw;
-                transform: none;
+                margin: -25vh 4vw 10vh 4vw;
                 pointer-events: auto;
-                background: rgba(255,255,255,0.6);
+                background: rgba(255,255,255,0.7);
+                padding: 30px;
             }
-            .detail-text { font-size: 14px; min-height: auto; }
-            .detail-label { font-size: 10px; }
-            .launch-btn { font-size: 12px; width: 100%; justify-content: center; margin-top: 10px; opacity: 1 !important; }
-            .list-wrapper { padding-top: 15vh; padding-bottom: 5vh; }
-            .item-title { font-size: 11vw; margin-left: 10vw; }
-            .item-num { font-size: 3.5vw; top: 4.5vh; }
-            .brand-logo { height: 24px; }
+            .detail-text { font-size: 18px; min-height: auto; }
+            .launch-btn { width: 100%; justify-content: center; opacity: 1 !important; transform: none !important; }
+            .list-wrapper { padding-top: 15vh; padding-bottom: 2vh; }
+            .item-title { font-size: 12vw; margin-left: 12vw; }
+            .item-num { font-size: 10px; top: 5vh; }
+            .brand-logo { height: 28px; }
         }
     </style>
 </head>
@@ -284,8 +294,8 @@
     <nav class="nav-top">
         <img src="montaq.png" alt="MontaQ Labs" class="brand-logo"/>
         <div class="nav-meta">
-            <div>SYS.OP / 01</div>
-            <div>INTERNAL SYSTEMS</div>
+            <div>EST. MMXXVI</div>
+            <div>THE ECOSYSTEM</div>
         </div>
     </nav>
 
@@ -296,9 +306,9 @@
 
     <!-- Contextual Details -->
     <div class="fixed-detail" id="fixed-detail">
-        <div class="detail-label">MODULE_INFO</div>
-        <div class="detail-text" id="desc-text">Select a system module to initialize access.</div>
-        <a href="#" id="launch-btn" class="launch-btn" target="_blank">PROCEED TO MODULE ↗</a>
+        <div class="detail-label">GUIDE / ORIENTATION</div>
+        <div class="detail-text" id="desc-text">Select a portal to begin your journey through MontaQ Labs.</div>
+        <a href="#" id="launch-btn" class="launch-btn" target="_blank">OPEN PORTAL ↗</a>
     </div>
 
     <script>
@@ -306,16 +316,16 @@
            DATA & CONSTANTS
         ========================================= */
         const tools = [
-            { name: "Mattermost", desc: "Institutional messaging and engineering coordination.", url: "https://chat.montaq.org" },
-            { name: "Vaultwarden", desc: "Secure credential vault and secret management.", url: "https://vault.montaq.org" },
-            { name: "Vikunja", desc: "Project tracking and task orchestration engine.", url: "https://project.montaq.org" },
-            { name: "Outline", desc: "Knowledge base and documentation repository.", url: "https://wiki.montaq.org" },
-            { name: "Documenso", desc: "Digital document signing infrastructure.", url: "https://sign.montaq.org" },
-            { name: "InvoiceShelf", desc: "Financial reporting and fiscal management.", url: "https://invoice.montaq.org" },
-            { name: "HedgeDoc", desc: "Real-time markdown collaboration.", url: "https://pad.montaq.org" },
-            { name: "n8n", desc: "Workflow automation and system interconnect.", url: "https://n8n.montaq.org" },
-            { name: "Authentik", desc: "Identity provider and unified gateway.", url: "https://auth.montaq.org" },
-            { name: "Minio", desc: "S3 compatible distributed object storage.", url: "https://s3.montaq.org" }
+            { name: "Chat", desc: "Our real-time collective intelligence. Connect with the team, share ideas, and synchronize our engineering effort.", url: "https://chat.montaq.org" },
+            { name: "Wiki", desc: "The living memory of our lab. Explore documented wisdom, project lore, and contribute your own discoveries.", url: "https://wiki.montaq.org" },
+            { name: "Vault", desc: "The sanctuary for our digital keys. Manage your secrets and uphold the integrity of our shared infrastructure.", url: "https://vault.montaq.org" },
+            { name: "Projects", desc: "Mapping the stars of our ambition. Track milestones, coordinate tasks, and orchestrate the future we're building.", url: "https://project.montaq.org" },
+            { name: "Documents", desc: "Formalizing the shared vision. Review, manage, and sign the protocols that define our operational growth.", url: "https://sign.montaq.org" },
+            { name: "Finance", desc: "Stewardship and transparency. Monitor our shared resources and fiscal health with institutional clarity.", url: "https://invoice.montaq.org" },
+            { name: "Notebook", desc: "Pure ideation. A collaborative canvas for raw thoughts, spontaneous brainstorming, and markdown drafting.", url: "https://pad.montaq.org" },
+            { name: "Automations", desc: "The invisible threads. Creating the autonomous workflows and system bridges that amplify our efficiency.", url: "https://n8n.montaq.org" },
+            { name: "Identity", desc: "Your central key to the ecosystem. Manage your unified access and profile across all MontaQ systems.", url: "https://auth.montaq.org" },
+            { name: "Storage", desc: "The data horizon. High-performance object storage for the assets, experiments, and results we produce.", url: "https://s3.montaq.org" }
         ];
 
         /* =========================================
@@ -360,16 +370,16 @@
 
         document.querySelectorAll('a').forEach(el => {
             el.addEventListener('mouseenter', () => {
-                ring.style.width = '70px';
-                ring.style.height = '70px';
-                ring.style.background = 'rgba(0,0,0,0.03)';
-                ring.style.borderColor = 'rgba(176, 141, 87, 0.5)';
+                ring.style.width = '75px';
+                ring.style.height = '75px';
+                ring.style.background = 'rgba(176, 141, 87, 0.05)';
+                ring.style.borderColor = 'rgba(176, 141, 87, 0.6)';
             });
             el.addEventListener('mouseleave', () => {
-                ring.style.width = '40px';
-                ring.style.height = '40px';
+                ring.style.width = '45px';
+                ring.style.height = '45px';
                 ring.style.background = 'transparent';
-                ring.style.borderColor = 'rgba(0,0,0,0.2)';
+                ring.style.borderColor = 'rgba(176, 141, 87, 0.3)';
             });
         });
 
@@ -442,8 +452,8 @@
             item.addEventListener('mouseenter', () => {
                 scrambler.setText(tools[index].desc);
                 launchBtn.href = tools[index].url;
-                gsap.to(launchBtn, { opacity: 1, y: 0, duration: 0.4 });
-                targetVelo = 1.2;
+                gsap.to(launchBtn, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' });
+                targetVelo = 1.3;
             });
             
             item.addEventListener('mouseleave', () => {
@@ -455,7 +465,7 @@
            SMOOTH SCROLL (LENIS)
         ========================================= */
         const lenis = new Lenis({
-            duration: 1.2,
+            duration: 1.4,
             easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
             smooth: true,
         });
@@ -524,33 +534,33 @@
                 mouse.x *= uResolution.x / uResolution.y;
                 
                 float dist = distance(st, mouse);
-                float interaction = exp(-dist * 5.0) * uVelo;
+                float interaction = exp(-dist * 4.5) * uVelo;
 
                 vec2 q = vec2(0.0);
-                q.x = snoise(st * 1.2 + uTime * 0.05);
-                q.y = snoise(st * 1.2 + vec2(2.0));
+                q.x = snoise(st * 1.3 + uTime * 0.04);
+                q.y = snoise(st * 1.3 + vec2(3.0));
 
                 vec2 r = vec2(0.0);
-                r.x = snoise(st * 1.8 + q * 2.0 + uTime * 0.1 + interaction * 0.4);
-                r.y = snoise(st * 1.8 + q * 2.0 + uTime * 0.08 - interaction * 0.4);
+                r.x = snoise(st * 2.0 + q * 2.0 + uTime * 0.08 + interaction * 0.5);
+                r.y = snoise(st * 2.0 + q * 2.0 + uTime * 0.06 - interaction * 0.5);
 
-                float f = snoise(st * 2.0 + r * 1.5);
+                float f = snoise(st * 2.5 + r * 1.5);
 
-                // Pearl Ivory Villa Palette
-                vec3 base = vec3(0.97, 0.95, 0.94); 
-                vec3 shadow = vec3(0.92, 0.90, 0.88);
+                // Pearl Ivory Villa Palette - Slightly warmer
+                vec3 base = vec3(0.98, 0.97, 0.95); 
+                vec3 shadow = vec3(0.93, 0.91, 0.88);
                 vec3 highlight = vec3(1.0, 1.0, 1.0);
 
                 vec3 color = mix(base, shadow, clamp(f*f*2.0, 0.0, 1.0));
                 color = mix(color, highlight, clamp(length(q)*1.2, 0.0, 1.0));
 
-                // Minimal iridescence
+                // Minimal Iridescence in interaction
                 vec3 irid = vec3(
                     0.5 + 0.5 * cos(f * 4.0 + 0.0),
                     0.5 + 0.5 * cos(f * 4.0 + 2.0),
                     0.5 + 0.5 * cos(f * 4.0 + 4.0)
                 );
-                color = mix(color, irid, 0.03 * interaction);
+                color = mix(color, irid, 0.04 * interaction);
 
                 gl_FragColor = vec4(color, 1.0);
             }
@@ -587,8 +597,8 @@
 
         const clockGL = new THREE.Clock();
         function animateGL() {
-            glMouse.lerp(targetGlMouse, 0.05);
-            currentVelo += (targetVelo - currentVelo) * 0.05;
+            glMouse.lerp(targetGlMouse, 0.04);
+            currentVelo += (targetVelo - currentVelo) * 0.04;
             material.uniforms.uTime.value = clockGL.getElapsedTime();
             material.uniforms.uMouse.value.copy(glMouse);
             material.uniforms.uVelo.value = currentVelo;
@@ -605,23 +615,23 @@
         const loader = document.querySelector('.loader');
 
         const interval = setInterval(() => {
-            progress += Math.floor(Math.random() * 10) + 1;
+            progress += Math.floor(Math.random() * 12) + 1;
             if(progress >= 100) {
                 progress = 100;
                 clearInterval(interval);
                 
                 setTimeout(() => {
-                    gsap.to(loader, { yPercent: -100, duration: 1.2, ease: 'expo.inOut' });
+                    gsap.to(loader, { yPercent: -100, duration: 1.5, ease: 'expo.inOut' });
                     gsap.fromTo('.item-title', 
-                        { y: 100, opacity: 0 }, 
-                        { y: 0, opacity: 1, duration: 1.2, stagger: 0.08, ease: 'power4.out', delay: 0.4 }
+                        { y: 120, opacity: 0 }, 
+                        { y: 0, opacity: 1, duration: 1.4, stagger: 0.1, ease: 'power4.out', delay: 0.5 }
                     );
-                    gsap.fromTo('.nav-top', { opacity: 0 }, { opacity: 1, duration: 1, delay: 0.8 });
-                    gsap.fromTo('#fixed-detail', { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 1, delay: 1 });
-                }, 100);
+                    gsap.fromTo('.nav-top', { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 1.2, delay: 0.8, ease: 'power3.out' });
+                    gsap.fromTo('#fixed-detail', { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 1.2, delay: 1.1, ease: 'power3.out' });
+                }, 150);
             }
             loaderPercent.innerText = progress.toString().padStart(3, '0');
-        }, 20);
+        }, 25);
 
     </script>
 </body>
