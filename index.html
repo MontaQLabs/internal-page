@@ -17,8 +17,9 @@
 
     <style>
         :root {
-            --bg-color: #000;
-            --text-color: #111;
+            --bg-color: #f7f3f0; /* Villa ivory */
+            --text-color: #000000;
+            --accent-color: #b08d57; /* Mediterranean gold */
             --font-serif: 'Playfair Display', serif;
             --font-mono: 'JetBrains Mono', monospace;
         }
@@ -40,8 +41,8 @@
         }
 
         ::selection {
-            background: #111;
-            color: #fff;
+            background: var(--text-color);
+            color: var(--bg-color);
         }
 
         /* Cinematic Noise Overlay */
@@ -50,17 +51,17 @@
             top: 0; left: 0; width: 100vw; height: 100vh;
             pointer-events: none;
             z-index: 9998;
-            opacity: 0.04;
+            opacity: 0.05;
             background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
         }
 
         /* Custom Cursor */
         .cursor-dot {
-            position: fixed; width: 6px; height: 6px; background: #000; border-radius: 50%;
+            position: fixed; width: 6px; height: 6px; background: var(--text-color); border-radius: 50%;
             pointer-events: none; z-index: 10000; transform: translate(-50%, -50%);
         }
         .cursor-ring {
-            position: fixed; width: 40px; height: 40px; border: 1px solid rgba(0,0,0,0.3);
+            position: fixed; width: 40px; height: 40px; border: 1px solid rgba(0,0,0,0.2);
             border-radius: 50%; pointer-events: none; z-index: 9999;
             transform: translate(-50%, -50%); transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1), height 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.4s;
             will-change: transform;
@@ -75,12 +76,12 @@
             pointer-events: none;
         }
 
-        /* Loader */
+        /* Loader - Made Light */
         .loader {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #080808;
-            color: #fff;
+            background: var(--bg-color);
+            color: var(--text-color);
             z-index: 99999;
             display: flex;
             justify-content: center;
@@ -107,8 +108,9 @@
         }
         .nav-top * { pointer-events: auto; }
         .brand-logo {
-            height: 28px;
+            height: 32px;
             display: block;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
         }
         .nav-meta {
             text-align: right;
@@ -116,121 +118,150 @@
             line-height: 1.6;
             letter-spacing: 0.15em;
             text-transform: uppercase;
-            font-weight: 300;
+            font-weight: 400;
+            color: var(--text-color);
         }
 
         /* Main Scroll Layout */
         .list-wrapper {
             position: relative;
-            width: 60vw;
-            padding-top: 35vh;
-            padding-bottom: 35vh;
-            padding-left: 10vw;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 30vh;
+            padding-bottom: 30vh;
             z-index: 10;
         }
 
         .list-item {
             display: block;
             position: relative;
-            padding: 4.5vh 0;
+            padding: 4vh 0;
             text-decoration: none;
             color: var(--text-color);
-            border-bottom: 1px solid rgba(0,0,0,0.06);
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+            margin: 0 4vw;
         }
 
         .item-num {
             position: absolute;
             left: 0;
-            top: 6vh;
-            font-size: 0.85vw;
-            opacity: 0.3;
+            top: 5.5vh;
+            font-size: 0.8vw;
+            opacity: 0.4;
             letter-spacing: 0.1em;
         }
 
         .item-title {
             font-family: var(--font-serif);
-            font-size: 5vw;
+            font-size: 5.5vw;
             font-weight: 400;
-            margin-left: 4vw;
+            margin-left: 5vw;
             transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease, color 0.6s;
             transform-origin: left center;
             letter-spacing: -0.01em;
         }
 
         .list-item:hover .item-title {
-            transform: translateX(3vw);
-            font-style: italic;
+            transform: translateX(2vw);
+            color: var(--accent-color);
         }
 
         .list-wrapper:hover .list-item:not(:hover) .item-title {
             opacity: 0.15;
         }
 
-        /* Fixed Detail Panel */
+        /* Detail Panel - Redesigned for clarity */
         .fixed-detail {
             position: fixed;
-            right: 8vw;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 22vw;
+            right: 5vw;
+            bottom: 5vh;
+            width: 25vw;
             display: flex;
             flex-direction: column;
-            gap: 2.5vh;
-            z-index: 10;
+            gap: 2vh;
+            z-index: 20;
             pointer-events: none;
+            background: rgba(255,255,255,0.4);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 4px;
+            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.03);
         }
 
         .detail-label {
-            font-size: 0.65vw;
+            font-size: 0.6vw;
             letter-spacing: 0.2em;
-            color: rgba(0,0,0,0.4);
-            border-bottom: 1px solid rgba(0,0,0,0.1);
-            padding-bottom: 1.5vh;
+            color: rgba(0,0,0,0.5);
+            text-transform: uppercase;
         }
 
         .detail-text {
-            font-size: 1.1vw;
-            line-height: 1.6;
+            font-size: 1vw;
+            line-height: 1.5;
             font-weight: 300;
-            min-height: 10vh;
+            min-height: 8vh;
+            color: #333;
         }
         
         .dull {
-            opacity: 0.3; /* Used for the scramble effect */
+            opacity: 0.4;
         }
 
         .launch-btn {
             align-self: flex-start;
             display: inline-flex;
             align-items: center;
-            gap: 0.5vw;
-            font-size: 0.75vw;
+            gap: 10px;
+            font-size: 0.7vw;
             color: #fff;
-            background: #000;
-            padding: 1.5vh 2vw;
-            border-radius: 50px;
+            background: var(--text-color);
+            padding: 12px 24px;
+            border-radius: 0; /* Brutalist villa feel */
             text-decoration: none;
             opacity: 0;
-            transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             pointer-events: auto;
             letter-spacing: 0.1em;
+            text-transform: uppercase;
         }
 
         .launch-btn:hover {
-            transform: scale(1.05);
-            background: #222;
+            background: var(--accent-color);
+            padding-right: 34px;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 1024px) {
+            .nav-meta { font-size: 1.5vw; }
+            .fixed-detail { width: 40vw; right: 4vw; bottom: 4vh; }
+            .detail-text { font-size: 1.8vw; }
+            .detail-label { font-size: 1.2vw; }
+            .launch-btn { font-size: 1.4vw; }
         }
 
         @media (max-width: 768px) {
             .cursor-dot, .cursor-ring { display: none !important; }
             * { cursor: auto !important; }
             .nav-meta { font-size: 10px; }
-            .fixed-detail { display: none; }
-            .list-wrapper { width: 100vw; padding-left: 6vw; padding-right: 6vw; padding-top: 20vh; }
-            .item-title { font-size: 10vw; margin-left: 8vw; }
-            .item-num { font-size: 3vw; top: 5.5vh; }
-            .list-item:hover .item-title { transform: translateX(2vw); }
-            .brand-logo { height: 20px; }
+            .fixed-detail { 
+                position: relative;
+                width: calc(100% - 8vw);
+                right: auto;
+                bottom: auto;
+                margin: 0 4vw 10vh 4vw;
+                transform: none;
+                pointer-events: auto;
+                background: rgba(255,255,255,0.6);
+            }
+            .detail-text { font-size: 14px; min-height: auto; }
+            .detail-label { font-size: 10px; }
+            .launch-btn { font-size: 12px; width: 100%; justify-content: center; margin-top: 10px; opacity: 1 !important; }
+            .list-wrapper { padding-top: 15vh; padding-bottom: 5vh; }
+            .item-title { font-size: 11vw; margin-left: 10vw; }
+            .item-num { font-size: 3.5vw; top: 4.5vh; }
+            .brand-logo { height: 24px; }
         }
     </style>
 </head>
@@ -254,7 +285,7 @@
         <img src="montaq.png" alt="MontaQ Labs" class="brand-logo"/>
         <div class="nav-meta">
             <div>SYS.OP / 01</div>
-            <div>RESTRICTED ACCESS</div>
+            <div>INTERNAL SYSTEMS</div>
         </div>
     </nav>
 
@@ -265,9 +296,9 @@
 
     <!-- Contextual Details -->
     <div class="fixed-detail" id="fixed-detail">
-        <div class="detail-label">DESCRIPTION / MODULE</div>
-        <div class="detail-text" id="desc-text">Initiate sequence to explore internal modules.</div>
-        <a href="#" id="launch-btn" class="launch-btn" target="_blank">LAUNCH MODULE ↗</a>
+        <div class="detail-label">MODULE_INFO</div>
+        <div class="detail-text" id="desc-text">Select a system module to initialize access.</div>
+        <a href="#" id="launch-btn" class="launch-btn" target="_blank">PROCEED TO MODULE ↗</a>
     </div>
 
     <script>
@@ -275,16 +306,16 @@
            DATA & CONSTANTS
         ========================================= */
         const tools = [
-            { name: "Mattermost", desc: "Real-time team communication and engineering coordination.", url: "https://chat.montaq.org" },
-            { name: "Vaultwarden", desc: "End-to-end encrypted credential and secret management.", url: "https://vault.montaq.org" },
-            { name: "Vikunja", desc: "Advanced project tracking and task orchestration.", url: "https://project.montaq.org" },
-            { name: "Outline", desc: "Internal documentation and knowledge base.", url: "https://wiki.montaq.org" },
-            { name: "Documenso", desc: "Open-source digital document signing infrastructure.", url: "https://sign.montaq.org" },
-            { name: "InvoiceShelf", desc: "Financial management and invoicing platform.", url: "https://invoice.montaq.org" },
-            { name: "HedgeDoc", desc: "Collaborative real-time markdown editor for brainstorming.", url: "https://pad.montaq.org" },
-            { name: "n8n", desc: "Workflow automation and system interconnectivity.", url: "https://n8n.montaq.org" },
-            { name: "Authentik", desc: "Identity provider and unified Single Sign-On gateway.", url: "https://auth.montaq.org" },
-            { name: "Minio", desc: "High-performance S3 compatible object storage.", url: "https://s3.montaq.org" }
+            { name: "Mattermost", desc: "Institutional messaging and engineering coordination.", url: "https://chat.montaq.org" },
+            { name: "Vaultwarden", desc: "Secure credential vault and secret management.", url: "https://vault.montaq.org" },
+            { name: "Vikunja", desc: "Project tracking and task orchestration engine.", url: "https://project.montaq.org" },
+            { name: "Outline", desc: "Knowledge base and documentation repository.", url: "https://wiki.montaq.org" },
+            { name: "Documenso", desc: "Digital document signing infrastructure.", url: "https://sign.montaq.org" },
+            { name: "InvoiceShelf", desc: "Financial reporting and fiscal management.", url: "https://invoice.montaq.org" },
+            { name: "HedgeDoc", desc: "Real-time markdown collaboration.", url: "https://pad.montaq.org" },
+            { name: "n8n", desc: "Workflow automation and system interconnect.", url: "https://n8n.montaq.org" },
+            { name: "Authentik", desc: "Identity provider and unified gateway.", url: "https://auth.montaq.org" },
+            { name: "Minio", desc: "S3 compatible distributed object storage.", url: "https://s3.montaq.org" }
         ];
 
         /* =========================================
@@ -332,13 +363,13 @@
                 ring.style.width = '70px';
                 ring.style.height = '70px';
                 ring.style.background = 'rgba(0,0,0,0.03)';
-                ring.style.borderColor = 'rgba(0,0,0,0.8)';
+                ring.style.borderColor = 'rgba(176, 141, 87, 0.5)';
             });
             el.addEventListener('mouseleave', () => {
                 ring.style.width = '40px';
                 ring.style.height = '40px';
                 ring.style.background = 'transparent';
-                ring.style.borderColor = 'rgba(0,0,0,0.3)';
+                ring.style.borderColor = 'rgba(0,0,0,0.2)';
             });
         });
 
@@ -405,18 +436,18 @@
         const descText = document.getElementById('desc-text');
         const launchBtn = document.getElementById('launch-btn');
         const scrambler = new TextScramble(descText);
-        let targetVelo = 0.0; // Drives shader distortion
+        let targetVelo = 0.0;
 
         document.querySelectorAll('.list-item').forEach((item, index) => {
             item.addEventListener('mouseenter', () => {
                 scrambler.setText(tools[index].desc);
                 launchBtn.href = tools[index].url;
-                launchBtn.style.opacity = 1;
-                targetVelo = 1.5; // Spike WebGL distortion
+                gsap.to(launchBtn, { opacity: 1, y: 0, duration: 0.4 });
+                targetVelo = 1.2;
             });
             
             item.addEventListener('mouseleave', () => {
-                targetVelo = 0.0; // Return fluid to calm state
+                targetVelo = 0.0;
             });
         });
 
@@ -424,15 +455,9 @@
            SMOOTH SCROLL (LENIS)
         ========================================= */
         const lenis = new Lenis({
-            duration: 1.5,
+            duration: 1.2,
             easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            direction: 'vertical',
-            gestureDirection: 'vertical',
             smooth: true,
-            mouseMultiplier: 1,
-            smoothTouch: false,
-            touchMultiplier: 2,
-            infinite: false,
         });
 
         function raf(time) {
@@ -467,7 +492,6 @@
             uniform float uVelo;
             varying vec2 vUv;
 
-            // Simplex 2D noise implementation
             vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
             float snoise(vec2 v){
               const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
@@ -499,43 +523,34 @@
                 vec2 mouse = uMouse;
                 mouse.x *= uResolution.x / uResolution.y;
                 
-                // Mouse interaction distance
                 float dist = distance(st, mouse);
-                float interaction = exp(-dist * 4.0) * uVelo;
+                float interaction = exp(-dist * 5.0) * uVelo;
 
-                // Fluid wave math
                 vec2 q = vec2(0.0);
-                q.x = snoise(st * 1.5 + uTime * 0.04);
-                q.y = snoise(st * 1.5 + vec2(1.0));
+                q.x = snoise(st * 1.2 + uTime * 0.05);
+                q.y = snoise(st * 1.2 + vec2(2.0));
 
                 vec2 r = vec2(0.0);
-                r.x = snoise(st * 2.0 + q * 2.5 + uTime * 0.08 + interaction * 0.6);
-                r.y = snoise(st * 2.0 + q * 2.5 + uTime * 0.06 - interaction * 0.6);
+                r.x = snoise(st * 1.8 + q * 2.0 + uTime * 0.1 + interaction * 0.4);
+                r.y = snoise(st * 1.8 + q * 2.0 + uTime * 0.08 - interaction * 0.4);
 
-                float f = snoise(st * 2.5 + r * 2.0);
+                float f = snoise(st * 2.0 + r * 1.5);
 
-                // High-End Liquid Pearl Palette
-                vec3 basePearl = vec3(0.96, 0.97, 0.98); // very light silver/white
-                vec3 silverShadow = vec3(0.82, 0.85, 0.88); // soft grey
-                vec3 pureHighlight = vec3(1.0, 1.0, 1.0);
+                // Pearl Ivory Villa Palette
+                vec3 base = vec3(0.97, 0.95, 0.94); 
+                vec3 shadow = vec3(0.92, 0.90, 0.88);
+                vec3 highlight = vec3(1.0, 1.0, 1.0);
 
-                vec3 color = mix(basePearl, silverShadow, clamp(f*f*1.8, 0.0, 1.0));
-                color = mix(color, pureHighlight, clamp(length(q)*1.3, 0.0, 1.0));
+                vec3 color = mix(base, shadow, clamp(f*f*2.0, 0.0, 1.0));
+                color = mix(color, highlight, clamp(length(q)*1.2, 0.0, 1.0));
 
-                // Subtle Chromatic Iridescence embedded in shadows
+                // Minimal iridescence
                 vec3 irid = vec3(
-                    0.5 + 0.5 * cos(f * 6.0 + 0.0),
-                    0.5 + 0.5 * cos(f * 6.0 + 2.0),
-                    0.5 + 0.5 * cos(f * 6.0 + 4.0)
+                    0.5 + 0.5 * cos(f * 4.0 + 0.0),
+                    0.5 + 0.5 * cos(f * 4.0 + 2.0),
+                    0.5 + 0.5 * cos(f * 4.0 + 4.0)
                 );
-
-                color = mix(color, irid, 0.02 + 0.08 * interaction);
-
-                // Edge Vignette to frame the scene
-                vec2 uvVig = gl_FragCoord.xy / uResolution.xy;
-                float vignette = uvVig.x * uvVig.y * (1.0 - uvVig.x) * (1.0 - uvVig.y);
-                vignette = clamp(pow(16.0 * vignette, 0.15), 0.0, 1.0);
-                color *= vignette * 0.9 + 0.1;
+                color = mix(color, irid, 0.03 * interaction);
 
                 gl_FragColor = vec4(color, 1.0);
             }
@@ -562,7 +577,7 @@
 
         window.addEventListener('mousemove', (e) => {
             targetGlMouse.x = e.clientX / window.innerWidth;
-            targetGlMouse.y = 1.0 - (e.clientY / window.innerHeight); // Invert Y for GLSL
+            targetGlMouse.y = 1.0 - (e.clientY / window.innerHeight);
         });
 
         window.addEventListener('resize', () => {
@@ -572,62 +587,41 @@
 
         const clockGL = new THREE.Clock();
         function animateGL() {
-            const elapsedTime = clockGL.getElapsedTime();
-            
-            // Lerp mouse and velocity for buttery fluid interaction
-            glMouse.lerp(targetGlMouse, 0.04);
+            glMouse.lerp(targetGlMouse, 0.05);
             currentVelo += (targetVelo - currentVelo) * 0.05;
-
-            material.uniforms.uTime.value = elapsedTime;
+            material.uniforms.uTime.value = clockGL.getElapsedTime();
             material.uniforms.uMouse.value.copy(glMouse);
             material.uniforms.uVelo.value = currentVelo;
-
             renderer.render(scene, camera);
             requestAnimationFrame(animateGL);
         }
         animateGL();
 
         /* =========================================
-           LOADER & INITIALIZATION SEQUENCE
+           LOADER & REVEAL
         ========================================= */
         let progress = 0;
         const loaderPercent = document.querySelector('.loader-percent');
         const loader = document.querySelector('.loader');
 
-        // Simulate asset loading
         const interval = setInterval(() => {
-            progress += Math.floor(Math.random() * 8) + 1;
+            progress += Math.floor(Math.random() * 10) + 1;
             if(progress >= 100) {
                 progress = 100;
                 clearInterval(interval);
                 
-                // GSAP Reveal Timeline
                 setTimeout(() => {
-                    gsap.to(loader, { yPercent: -100, duration: 1.4, ease: 'expo.inOut' });
-                    
+                    gsap.to(loader, { yPercent: -100, duration: 1.2, ease: 'expo.inOut' });
                     gsap.fromTo('.item-title', 
-                        { y: 60, opacity: 0 }, 
-                        { y: 0, opacity: 1, duration: 1.4, stagger: 0.06, ease: 'power4.out', delay: 0.5 }
+                        { y: 100, opacity: 0 }, 
+                        { y: 0, opacity: 1, duration: 1.2, stagger: 0.08, ease: 'power4.out', delay: 0.4 }
                     );
-                    
-                    gsap.fromTo('.item-num', 
-                        { opacity: 0 }, 
-                        { opacity: 0.3, duration: 1, stagger: 0.06, ease: 'power2.out', delay: 0.7 }
-                    );
-
-                    gsap.fromTo('.nav-top', 
-                        { y: -30, opacity: 0 }, 
-                        { y: 0, opacity: 1, duration: 1.2, ease: 'power3.out', delay: 0.8 }
-                    );
-
-                    gsap.fromTo('#fixed-detail', 
-                        { x: 40, opacity: 0 }, 
-                        { x: 0, opacity: 1, duration: 1.2, ease: 'power3.out', delay: 1.0 }
-                    );
-                }, 200);
+                    gsap.fromTo('.nav-top', { opacity: 0 }, { opacity: 1, duration: 1, delay: 0.8 });
+                    gsap.fromTo('#fixed-detail', { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 1, delay: 1 });
+                }, 100);
             }
             loaderPercent.innerText = progress.toString().padStart(3, '0');
-        }, 30);
+        }, 20);
 
     </script>
 </body>
