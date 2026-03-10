@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MontaQ Labs — Internal</title>
+    <!-- Include Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root {
+            --bg: #000000;
+            --fg: #ffffff;
+            --accent: #ffffff;
+            --card-bg: rgba(10, 10, 10, 0.7);
+            --border: rgba(255, 255, 255, 0.1);
+            --border-hover: rgba(255, 255, 255, 0.3);
+            --text-muted: #888888;
+            --font-main: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--fg);
+            font-family: var(--font-main);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Canvas for Three.js background */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 80px 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            margin-bottom: 80px;
+            animation: fadeIn 0.8s ease-out;
+            text-align: center;
+        }
+
+        .logo-container {
+            margin-bottom: 24px;
+            display: inline-block;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .logo-img {
+            max-height: 80px;
+            width: auto;
+            display: block;
+            margin: 0 auto;
+            /* Added slight drop shadow for depth against the 3D background */
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
+        }
+
+        h1 {
+            font-size: 48px;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            margin-bottom: 16px;
+            line-height: 1.1;
+            background: linear-gradient(180deg, #ffffff 0%, #888888 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .description {
+            font-size: 18px;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            animation: fadeIn 1s ease-out 0.2s both;
+        }
+
+        .tool-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            padding: 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .tool-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-5px) scale(1.02);
+            background: rgba(20, 20, 20, 0.8);
+            box-shadow: 0 10px 40px rgba(255, 255, 255, 0.05);
+        }
+
+        .tool-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .tool-name::after {
+            content: '↗';
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            transform: translateX(-10px);
+        }
+
+        .tool-card:hover .tool-name::after {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .tool-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .tag {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border: 1px solid var(--border);
+            padding: 4px 10px;
+            border-radius: 100px;
+            margin-top: 16px;
+            display: inline-block;
+            width: fit-content;
+            background: rgba(255,255,255,0.03);
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .tool-card:hover .tag {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        footer {
+            margin-top: 120px;
+            border-top: 1px solid var(--border);
+            padding-top: 40px;
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @media (max-width: 640px) {
+            h1 { font-size: 32px; }
+            .container { padding: 40px 20px; }
+            header { margin-bottom: 40px; }
+            .tools-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Hover effect glow */
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255,255,255,0.1) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .tool-card:hover::before {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <img src="montaq.png" alt="MontaQ Labs Logo" class="logo-img">
+            </div>
+            <h1>Internal Systems</h1>
+            <p class="description">The centralized hub for MontaQ Labs engineering and operations. Fully integrated, secured, and distributed.</p>
+        </header>
+
+        <div class="tools-grid">
+            <a href="https://chat.montaq.org" class="tool-card">
+                <div>
+                    <div class="tool-name">Mattermost</div>
+                    <p class="tool-desc">Real-time team communication and engineering coordination.</p>
+                </div>
+                <div class="tag">Messaging</div>
+            </a>
+
+            <a href="https://vault.montaq.org" class="tool-card">
+                <div>
+                    <div class="tool-name">Vaultwarden</div>
+                    <p class="tool-desc">End-to-end encrypted credential and secret management.</p>
+                </div>
+                <div class="tag">Security</div>
+            </a>
+
+            <a href="https://project.montaq.org" class="tool-card">
+                <div>
+                    <div class="tool-name">Vikunja</div>
+                    <p class="tool-desc">Advanced project tracking and task orchestration.</p>
+                </div>
+                <div class="tag">Management</div>
+            </a>
+
+            <a href="https://wiki.montaq.org" class="tool-card">
+                <div>
+                    <div class="tool-name">Outline</div>
+                    <p class="tool-desc">Internal documentation and knowledge base.</p>
+                </div>
+                <div class="tag">Knowledge</div>
+            </a>
+
+            <a href="https://sign.montaq.org" class="tool-card">
+                <div>
+                    <div class="tool-name">Documenso</div>
+                    <p class="tool-desc">Open-source digital document signing infrastructure.</p>
+                </div>
+                <div class="tag">Operations</div>
+            </a>
+
+            <a href="https://invoice.montaq.org" class="tool-card">
+                <div>
+                    <div class="tool-name">InvoiceShelf</div>
+                    <p class="tool-desc">Financial management and invoicing platform.</p>
+                </div>
+                <div class="tag">Finance</div>
+            </a>
+
+            <a href="https://pad.montaq.org" class="tool-card">
+                <div>
+                    <div class="tool-name">HedgeDoc</div>
+                    <p class="tool-desc">Collaborative real-time markdown editor for brainstorming.</p>
+                </div>
+                <div class="tag">Editor</div>
+            </a>
+
+            <a href="https://n8n.montaq.org" class="tool-card">
+                <div>
+                    <div class="tool-name">n8n</div>
+                    <p class="tool-desc">Workflow automation and system interconnectivity.</p>
+                </div>
+                <div class="tag">Automation</div>
+            </a>
+
+            <a href="https://auth.montaq.org" class="tool-card">
+                <div>
+                    <div class="tool-name">Authentik</div>
+                    <p class="tool-desc">Identity provider and unified Single Sign-On gateway.</p>
+                </div>
+                <div class="tag">Identity</div>
+            </a>
+
+            <a href="https://s3.montaq.org" class="tool-card">
+                <div>
+                    <div class="tool-name">Minio</div>
+                    <p class="tool-desc">High-performance S3 compatible object storage.</p>
+                </div>
+                <div class="tag">Storage</div>
+            </a>
+        </div>
+
+        <footer>
+            <div>&copy; 2026 MontaQ Labs</div>
+            <div>Restricted to Organization Members</div>
+        </footer>
+    </div>
+
+    <script>
+        // Interactive glow effect for cards
+        document.querySelectorAll('.tool-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                card.style.setProperty('--x', `${x}%`);
+                card.style.setProperty('--y', `${y}%`);
+            });
+        });
+
+        // Three.js Background Animation
+        const canvas = document.querySelector('#bg-canvas');
+        const scene = new THREE.Scene();
+
+        // Fog for depth
+        scene.fog = new THREE.FogExp2(0x000000, 0.001);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 30;
+
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        // Particle system
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 3000;
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for(let i = 0; i < particlesCount * 3; i++) {
+            // Distribute particles in a large sphere
+            posArray[i] = (Math.random() - 0.5) * 150;
+        }
+
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+        const material = new THREE.PointsMaterial({
+            size: 0.15,
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.5,
+            blending: THREE.AdditiveBlending
+        });
+
+        const particlesMesh = new THREE.Points(particlesGeometry, material);
+        scene.add(particlesMesh);
+
+        // Network lines connecting particles to simulate a web/nodes network
+        const lineMaterial = new THREE.LineBasicMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.15
+        });
+        
+        // Connect nearby particles (using a subset to keep performance good)
+        const lineGeometry = new THREE.BufferGeometry();
+        const linePositions = [];
+        
+        // Find close pairs (simple O(N^2) for a small subset)
+        const subsetCount = 150;
+        for (let i = 0; i < subsetCount; i++) {
+            const ix = posArray[i * 3];
+            const iy = posArray[i * 3 + 1];
+            const iz = posArray[i * 3 + 2];
+            
+            for (let j = i + 1; j < subsetCount; j++) {
+                const jx = posArray[j * 3];
+                const jy = posArray[j * 3 + 1];
+                const jz = posArray[j * 3 + 2];
+                
+                const distSq = (ix - jx)**2 + (iy - jy)**2 + (iz - jz)**2;
+                if (distSq < 400) { // arbitrary threshold
+                    linePositions.push(ix, iy, iz);
+                    linePositions.push(jx, jy, jz);
+                }
+            }
+        }
+        
+        lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+        const linesMesh = new THREE.LineSegments(lineGeometry, lineMaterial);
+        scene.add(linesMesh);
+
+        // Mouse interaction
+        let mouseX = 0;
+        let mouseY = 0;
+        let targetX = 0;
+        let targetY = 0;
+
+        const windowHalfX = window.innerWidth / 2;
+        const windowHalfY = window.innerHeight / 2;
+
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX - windowHalfX);
+            mouseY = (event.clientY - windowHalfY);
+        });
+
+        // Animation Loop
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const elapsedTime = clock.getElapsedTime();
+
+            targetX = mouseX * 0.001;
+            targetY = mouseY * 0.001;
+
+            // Slow idle rotation
+            particlesMesh.rotation.y += 0.0005;
+            particlesMesh.rotation.x += 0.0002;
+            
+            linesMesh.rotation.y += 0.0005;
+            linesMesh.rotation.x += 0.0002;
+
+            // Mouse parallax effect
+            particlesMesh.rotation.y += 0.05 * (targetX - particlesMesh.rotation.y);
+            particlesMesh.rotation.x += 0.05 * (targetY - particlesMesh.rotation.x);
+            
+            linesMesh.rotation.y += 0.05 * (targetX - linesMesh.rotation.y);
+            linesMesh.rotation.x += 0.05 * (targetY - linesMesh.rotation.x);
+
+            // Add gentle floating motion to camera
+            camera.position.x = Math.sin(elapsedTime * 0.2) * 2;
+            camera.position.y = Math.cos(elapsedTime * 0.2) * 2;
+            camera.lookAt(scene.position);
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Handle Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
