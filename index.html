@@ -3,637 +3,409 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MontaQ Labs / The Journey</title>
+    <title>MontaQ Labs | Mission Control</title>
     <link rel="icon" type="image/png" href="montaq.png">
-
-    <!-- Core Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
 
     <!-- Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@100;200;300;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --bg-color: #f8f6f2; /* Warm Villa Ivory */
-            --text-color: #1a1a1a;
-            --accent-color: #b08d57; /* Mediterranean Gold */
+            --bg: #F5F4F0; /* Industrial Ivory */
+            --ink: #121212; /* Carbon Ink */
+            --dim: #7A7A77;
+            --accent: #0055FF; /* Precision Blue */
+            --border: #D1D0CB;
             --font-serif: 'Playfair Display', serif;
             --font-mono: 'JetBrains Mono', monospace;
+            --font-sans: 'Inter', sans-serif;
+            --frame-gap: 40px;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            cursor: none;
-        }
-
+        /* 1. System Architecture */
+        * { box-sizing: border-box; margin: 0; padding: 0; cursor: default; }
+        
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: var(--font-mono);
-            overflow-x: hidden;
+            background-color: var(--bg);
+            color: var(--ink);
+            font-family: var(--font-sans);
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        ::selection {
-            background: var(--accent-color);
-            color: #fff;
-        }
-
-        /* Cinematic Noise Overlay */
-        .noise {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            pointer-events: none;
-            z-index: 9998;
-            opacity: 0.06;
-            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
-        }
-
-        /* Custom Cursor */
-        .cursor-dot {
-            position: fixed; width: 5px; height: 5px; background: var(--text-color); border-radius: 50%;
-            pointer-events: none; z-index: 10000; transform: translate(-50%, -50%);
-        }
-        .cursor-ring {
-            position: fixed; width: 45px; height: 45px; border: 1px solid rgba(176, 141, 87, 0.3);
-            border-radius: 50%; pointer-events: none; z-index: 9999;
-            transform: translate(-50%, -50%); transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1), height 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.4s;
-            will-change: transform;
-        }
-
-        /* WebGL Canvas */
-        #glcanvas {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        /* Loader */
-        .loader {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: var(--bg-color);
-            color: var(--text-color);
-            z-index: 99999;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
             display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .loader-percent {
-            font-family: var(--font-serif);
-            font-size: 10vw;
-            font-weight: 400;
-            font-variant-numeric: tabular-nums;
-            letter-spacing: -0.02em;
-            font-style: italic;
+            padding: var(--frame-gap);
         }
 
-        /* Header Navigation */
-        .nav-top {
-            position: fixed;
-            top: 0; left: 0; width: 100vw;
-            padding: 40px 60px;
+        .system-frame {
+            border: 1px solid var(--ink);
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: 520px 1fr;
+            position: relative;
+            background: #fff;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.05);
+        }
+
+        /* Technical Markings */
+        .system-frame::before { content: "SYS_REF: MTQ-772"; position: absolute; top: -25px; left: 0; font-family: var(--font-mono); font-size: 9px; color: var(--dim); font-weight: 700; }
+        .system-frame::after { content: "GATEWAY_ACCESS_v5.0.2"; position: absolute; bottom: -25px; right: 0; font-family: var(--font-mono); font-size: 9px; color: var(--dim); font-weight: 700; }
+
+        /* 2. Sidebar: The Command Pillar */
+        aside {
+            border-right: 1px solid var(--ink);
+            padding: 80px 60px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            background: #fff;
+        }
+
+        .logo-main {
+            width: 180px; /* Big & Powerful */
+            height: auto;
+            margin-bottom: 40px;
+            /* Filter removed - original color restored */
+        }
+
+        .brand-h1 {
+            font-family: var(--font-serif);
+            font-size: 4.5rem;
+            line-height: 0.8;
+            letter-spacing: -0.06em;
+            font-weight: 900;
+        }
+
+        .brand-sub {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5em;
+            color: var(--accent);
+            margin-top: 25px;
+            font-weight: 700;
+        }
+
+        /* Builder Protocol Redesign */
+        .protocol-manifest {
+            margin-top: 80px;
+            background: var(--bg);
+            padding: 30px;
+            border: 1px solid var(--border);
+        }
+
+        .protocol-label {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--ink);
+            margin-bottom: 25px;
+            display: block;
+            font-weight: 800;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .log-entry {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 100;
-            pointer-events: none;
-        }
-        .nav-top * { pointer-events: auto; }
-        .brand-logo {
-            height: 35px;
-            display: block;
-        }
-        .nav-meta {
-            text-align: right;
-            font-size: 11px;
-            line-height: 1.6;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            font-weight: 400;
-            color: var(--text-color);
-            opacity: 0.6;
         }
 
-        /* Main Scroll Layout */
-        .list-wrapper {
-            position: relative;
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding-top: 35vh;
-            padding-bottom: 35vh;
-            z-index: 10;
-        }
+        .log-text { color: var(--dim); font-weight: 500; }
+        .log-status { font-weight: 700; font-size: 9px; }
+        .status-ok { color: #22C55E; }
+        .status-wait { color: var(--accent); }
+        .status-load { color: #EAB308; }
 
-        .list-item {
-            display: block;
-            position: relative;
-            padding: 4.5vh 0;
-            text-decoration: none;
-            color: var(--text-color);
-            border-bottom: 1px solid rgba(0,0,0,0.06);
-            margin: 0 4vw;
-        }
-
-        .item-num {
-            position: absolute;
-            left: 0;
-            top: 6.5vh;
-            font-size: 11px;
-            opacity: 0.4;
-            letter-spacing: 0.15em;
-            font-family: var(--font-mono);
-        }
-
-        .item-title {
-            font-family: var(--font-serif);
-            font-size: 6vw;
-            font-weight: 400;
-            margin-left: 6vw;
-            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease, color 0.6s;
-            transform-origin: left center;
-            letter-spacing: -0.01em;
-        }
-
-        .list-item:hover .item-title {
-            transform: translateX(3vw);
-            color: var(--accent-color);
-            font-style: italic;
-        }
-
-        .list-wrapper:hover .list-item:not(:hover) .item-title {
-            opacity: 0.15;
-        }
-
-        /* Detail Panel - Redesigned as a Poetic Sidebar */
-        .fixed-detail {
-            position: fixed;
-            right: 5vw;
-            bottom: 6vh;
-            width: 28vw;
+        /* 3. Main Stage: The Inventory */
+        main {
+            padding: 0;
             display: flex;
             flex-direction: column;
-            gap: 2.5vh;
-            z-index: 20;
-            pointer-events: none;
-            background: rgba(255,255,255,0.4);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 40px;
-            border: 1px solid rgba(255,255,255,0.6);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.04);
-            animation: panelFade 1.2s ease-out;
+            overflow-y: auto;
+            position: relative;
         }
 
-        @keyframes panelFade {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .main-header {
+            padding: 100px 100px 80px;
+            border-bottom: 1px solid var(--border);
         }
 
-        .detail-label {
+        .system-path {
+            font-family: var(--font-mono);
             font-size: 10px;
-            letter-spacing: 0.3em;
-            color: var(--accent-color);
-            text-transform: uppercase;
-            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 25px;
+            display: block;
+            font-weight: 700;
         }
 
-        .detail-text {
+        h2.hero-title {
             font-family: var(--font-serif);
-            font-size: 1.4vw;
-            line-height: 1.5;
-            font-weight: 400;
-            min-height: 12vh;
-            color: #222;
-        }
-        
-        .dull {
-            opacity: 0.3;
+            font-size: 5rem;
+            font-weight: 900;
+            line-height: 0.95;
+            letter-spacing: -0.04em;
+            margin-bottom: 40px;
         }
 
-        .launch-btn {
-            align-self: flex-start;
-            display: inline-flex;
-            align-items: center;
-            gap: 15px;
-            font-size: 11px;
-            color: #fff;
-            background: var(--text-color);
-            padding: 16px 32px;
+        .hero-lead {
+            font-size: 1.4rem;
+            color: var(--dim);
+            max-width: 700px;
+            line-height: 1.6;
+        }
+
+        /* The Grid */
+        .module-grid {
+            padding: 100px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+            gap: 1px;
+            background: var(--border);
+        }
+
+        .lab-module {
+            background: #fff;
+            padding: 60px;
             text-decoration: none;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            pointer-events: auto;
-            letter-spacing: 0.2em;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+
+        .lab-module:hover {
+            background: var(--bg);
+            z-index: 10;
+            padding-left: 70px;
+        }
+
+        .module-id {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--accent);
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .lab-module h3 {
+            font-family: var(--font-serif);
+            font-size: 3rem;
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+
+        .module-desc {
+            font-size: 14px;
+            color: var(--dim);
+            line-height: 1.6;
+        }
+
+        .module-action {
+            margin-top: auto;
+            font-family: var(--font-mono);
+            font-size: 10px;
             text-transform: uppercase;
-            font-weight: 500;
+            letter-spacing: 0.2em;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        .launch-btn:hover {
-            background: var(--accent-color);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(176, 141, 87, 0.2);
+        .lab-module:hover h3 { color: var(--accent); }
+
+        /* Fixed Footer Details */
+        .system-footer {
+            margin-top: auto;
+            border-top: 1px solid var(--ink);
+            padding: 40px 100px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            background: #fff;
+            position: sticky;
+            bottom: 0;
+            z-index: 20;
+            font-weight: 700;
         }
 
-        /* Mobile Adjustments */
-        @media (max-width: 1024px) {
-            .nav-meta { font-size: 10px; }
-            .fixed-detail { width: 45vw; padding: 30px; }
-            .detail-text { font-size: 2.2vw; }
+        /* Mobile Optimization */
+        @media (max-width: 1300px) {
+            .system-frame { grid-template-columns: 440px 1fr; }
+            aside { padding: 60px 40px; }
         }
 
         @media (max-width: 768px) {
-            .cursor-dot, .cursor-ring { display: none !important; }
-            * { cursor: auto !important; }
-            .nav-top { padding: 25px 30px; }
-            .fixed-detail { 
-                position: relative;
-                width: calc(100% - 8vw);
-                right: auto;
-                bottom: auto;
-                margin: -25vh 4vw 10vh 4vw;
-                pointer-events: auto;
-                background: rgba(255,255,255,0.7);
-                padding: 30px;
-            }
-            .detail-text { font-size: 18px; min-height: auto; }
-            .launch-btn { width: 100%; justify-content: center; opacity: 1 !important; transform: none !important; }
-            .list-wrapper { padding-top: 15vh; padding-bottom: 2vh; }
-            .item-title { font-size: 12vw; margin-left: 12vw; }
-            .item-num { font-size: 10px; top: 5vh; }
-            .brand-logo { height: 28px; }
+            body { height: auto; overflow: auto; padding: 20px; }
+            .system-frame { grid-template-columns: 1fr; height: auto; }
+            aside { padding: 60px 30px; border-right: none; border-bottom: 1px solid var(--ink); height: auto; }
+            main { height: auto; }
+            .main-header { padding: 60px 30px; }
+            .module-grid { padding: 0; gap: 0; background: none; }
+            .lab-module { border-bottom: 1px solid var(--border); padding: 50px 30px; }
+            h2.hero-title { font-size: 3.5rem; }
+            .system-footer { flex-direction: column; gap: 20px; text-align: center; padding: 40px 30px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Overlays -->
-    <div class="noise"></div>
-    <div class="cursor-dot"></div>
-    <div class="cursor-ring"></div>
+    <div class="system-frame">
+        
+        <!-- SIDEBAR: LAB MISSION CONTROL -->
+        <aside>
+            <div class="brand-header">
+                <img src="montaq.png" alt="MontaQ" class="logo-main">
+                <h1 class="brand-h1">MontaQ</h1>
+                <div class="brand-sub">Laboratory OS / Release 5.0</div>
+            </div>
 
-    <!-- WebGL Background -->
-    <canvas id="glcanvas"></canvas>
+            <div class="protocol-manifest">
+                <span class="protocol-label">Builder_Mission_Manifest</span>
+                
+                <div class="log-entry">
+                    <span class="log-text">SEC_AUTH: IDENTITY_BIND</span>
+                    <span class="log-status status-ok">[ OK ]</span>
+                </div>
+                <div class="log-entry">
+                    <span class="log-text">NET_SYNC: LAB_UPLINK</span>
+                    <span class="log-status status-ok">[ OK ]</span>
+                </div>
+                <div class="log-entry">
+                    <span class="log-text">VAULT_KEY: RSA_VERIFY</span>
+                    <span class="log-status status-wait">[ WAIT ]</span>
+                </div>
+                <div class="log-entry">
+                    <span class="log-text">LORE_BUFF: ARCHIVE_SCAN</span>
+                    <span class="log-status status-load">[ 42% ]</span>
+                </div>
+                <div class="log-entry">
+                    <span class="log-text">DEV_PROV: LOCAL_INIT</span>
+                    <span class="log-status status-load">[ PEND ]</span>
+                </div>
+            </div>
 
-    <!-- Intro Loader -->
-    <div class="loader">
-        <div class="loader-percent">000</div>
-    </div>
+            <p style="margin-top: 60px; font-size: 13px; color: var(--dim); line-height: 1.7; font-style: italic;">
+                "We don't just write code; we engineer reality. Welcome to the family, Builder."
+            </p>
+        </aside>
 
-    <!-- Interface -->
-    <nav class="nav-top">
-        <img src="montaq.png" alt="MontaQ Labs" class="brand-logo"/>
-        <div class="nav-meta">
-            <div>EST. MMXXVI</div>
-            <div>THE ECOSYSTEM</div>
-        </div>
-    </nav>
+        <!-- MAIN: ATELIER INTERFACE -->
+        <main>
+            <div class="main-header">
+                <span class="system-path">LAB_CONTROL // INTERN_PORTAL // INDEX_MANIFEST</span>
+                <h2 class="hero-title">Welcome Home.</h2>
+                <p class="hero-lead">This gateway provides direct access to the MontaQ infrastructure. Every module here is a lever for our collective ambition. Build with intentionality.</p>
+            </div>
 
-    <!-- Scrollable List -->
-    <div class="list-wrapper" id="list-wrapper">
-        <!-- Injected via JS -->
-    </div>
+            <div class="module-grid">
+                
+                <!-- Category: Sync -->
+                <a href="https://chat.montaq.org" target="_blank" class="lab-module">
+                    <div class="module-id"><span>MODULE_SYNC</span><span>01 / 09</span></div>
+                    <h3>Chat</h3>
+                    <p class="module-desc">The laboratory heartbeat. Real-time engineering sync, spontaneous brainstorming, and family communication.</p>
+                    <div class="module-action">Connect Sync Layer →</div>
+                </a>
 
-    <!-- Contextual Details -->
-    <div class="fixed-detail" id="fixed-detail">
-        <div class="detail-label">GUIDE / ORIENTATION</div>
-        <div class="detail-text" id="desc-text">Select a portal to begin your journey through MontaQ Labs.</div>
-        <a href="#" id="launch-btn" class="launch-btn" target="_blank">OPEN PORTAL ↗</a>
+                <a href="https://wiki.montaq.org" target="_blank" class="lab-module">
+                    <div class="module-id"><span>MODULE_KNOW</span><span>02 / 09</span></div>
+                    <h3>Wiki</h3>
+                    <p class="module-desc">The living memory of MontaQ. Search technical lore, onboarding guides, and shared laboratory wisdom.</p>
+                    <div class="module-action">Access Archives →</div>
+                </a>
+
+                <!-- Category: Infrastructure -->
+                <a href="https://vault.montaq.org" target="_blank" class="lab-module">
+                    <div class="module-id"><span>MODULE_SEC</span><span>03 / 09</span></div>
+                    <h3>Vault</h3>
+                    <p class="module-desc">The sanctuary for digital keys. Secure management of laboratory secrets and infrastructure integrity.</p>
+                    <div class="module-action">Unlock Vault →</div>
+                </a>
+
+                <a href="https://n8n.montaq.org" target="_blank" class="lab-module">
+                    <div class="module-id"><span>MODULE_AUTO</span><span>04 / 09</span></div>
+                    <h3>Automations</h3>
+                    <p class="module-desc">Building the autonomous workflows and system bridges that multiply our engineering efficiency.</p>
+                    <div class="module-action">Initialize n8n →</div>
+                </a>
+
+                <a href="https://auth.montaq.org" target="_blank" class="lab-module">
+                    <div class="module-id"><span>MODULE_ID</span><span>05 / 09</span></div>
+                    <h3>Identity</h3>
+                    <p class="module-desc">Your central key to the ecosystem. Manage your unified lab profile and ecosystem access permissions.</p>
+                    <div class="module-action">Manage Key →</div>
+                </a>
+
+                <!-- Category: Ops -->
+                <a href="https://project.montaq.org" target="_blank" class="lab-module">
+                    <div class="module-id"><span>MODULE_OPS</span><span>06 / 09</span></div>
+                    <h3>Projects</h3>
+                    <p class="module-desc">Mapping milestones and orchestrating the trajectory of our shared laboratory experiments.</p>
+                    <div class="module-action">Open Plana →</div>
+                </a>
+
+                <a href="https://sign.montaq.org" target="_blank" class="lab-module">
+                    <div class="module-id"><span>MODULE_LGL</span><span>07 / 09</span></div>
+                    <h3>Documents</h3>
+                    <p class="module-desc">Formalizing protocols and the legal foundations of our collective operational growth.</p>
+                    <div class="module-action">Review Protocol →</div>
+                </a>
+
+                <a href="https://invoice.montaq.org" target="_blank" class="lab-module">
+                    <div class="module-id"><span>MODULE_FIS</span><span>08 / 09</span></div>
+                    <h3>Finance</h3>
+                    <p class="module-desc">Monitor our shared resources and fiscal health with institutional-grade transparency.</p>
+                    <div class="module-action">Audit Ledger →</div>
+                </a>
+
+                <a href="https://pad.montaq.org" target="_blank" class="lab-module">
+                    <div class="module-id"><span>MODULE_SAND</span><span>09 / 09</span></div>
+                    <h3>Notebook</h3>
+                    <p class="module-desc">Pure ideation sandbox. A collaborative canvas for raw thoughts and spontaneous brainstorming.</p>
+                    <div class="module-action">Draft Ideas →</div>
+                </a>
+
+            </div>
+
+            <!-- Fixed System Footer -->
+            <div class="system-footer">
+                <div style="display: flex; gap: 50px;">
+                    <span>MontaQ Labs &copy; 2026</span>
+                    <span>LOC: 41° 52' 41.16" N / 87° 37' 47.28" W</span>
+                </div>
+                <div id="clock-utc">00:00:00 UTC</div>
+            </div>
+        </main>
+
     </div>
 
     <script>
-        /* =========================================
-           DATA & CONSTANTS
-        ========================================= */
-        const tools = [
-            { name: "Chat", desc: "Our real-time collective intelligence. Connect with the team, share ideas, and synchronize our engineering effort.", url: "https://chat.montaq.org" },
-            { name: "Wiki", desc: "The living memory of our lab. Explore documented wisdom, project lore, and contribute your own discoveries.", url: "https://wiki.montaq.org" },
-            { name: "Vault", desc: "The sanctuary for our digital keys. Manage your secrets and uphold the integrity of our shared infrastructure.", url: "https://vault.montaq.org" },
-            { name: "Projects", desc: "Mapping the stars of our ambition. Track milestones, coordinate tasks, and orchestrate the future we're building.", url: "https://project.montaq.org" },
-            { name: "Documents", desc: "Formalizing the shared vision. Review, manage, and sign the protocols that define our operational growth.", url: "https://sign.montaq.org" },
-            { name: "Finance", desc: "Stewardship and transparency. Monitor our shared resources and fiscal health with institutional clarity.", url: "https://invoice.montaq.org" },
-            { name: "Notebook", desc: "Pure ideation. A collaborative canvas for raw thoughts, spontaneous brainstorming, and markdown drafting.", url: "https://pad.montaq.org" },
-            { name: "Automations", desc: "The invisible threads. Creating the autonomous workflows and system bridges that amplify our efficiency.", url: "https://n8n.montaq.org" },
-            { name: "Identity", desc: "Your central key to the ecosystem. Manage your unified access and profile across all MontaQ systems.", url: "https://auth.montaq.org" },
-            { name: "Storage", desc: "The data horizon. High-performance object storage for the assets, experiments, and results we produce.", url: "https://s3.montaq.org" }
-        ];
-
-        /* =========================================
-           DOM INJECTION
-        ========================================= */
-        const listWrapper = document.getElementById('list-wrapper');
-        tools.forEach((tool, index) => {
-            const num = String(index + 1).padStart(2, '0');
-            const a = document.createElement('a');
-            a.href = tool.url;
-            a.className = 'list-item';
-            a.innerHTML = `
-                <span class="item-num">${num}</span>
-                <h2 class="item-title">${tool.name}</h2>
-            `;
-            listWrapper.appendChild(a);
-        });
-
-        /* =========================================
-           CUSTOM CURSOR
-        ========================================= */
-        const dot = document.querySelector('.cursor-dot');
-        const ring = document.querySelector('.cursor-ring');
-        let mouseX = window.innerWidth / 2;
-        let mouseY = window.innerHeight / 2;
-        let ringX = mouseX;
-        let ringY = mouseY;
-
-        window.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-            dot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
-        });
-
-        function renderCursor() {
-            ringX += (mouseX - ringX) * 0.15;
-            ringY += (mouseY - ringY) * 0.15;
-            ring.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
-            requestAnimationFrame(renderCursor);
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            document.getElementById('clock-utc').innerText = timeStr + ' UTC';
         }
-        renderCursor();
-
-        document.querySelectorAll('a').forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                ring.style.width = '75px';
-                ring.style.height = '75px';
-                ring.style.background = 'rgba(176, 141, 87, 0.05)';
-                ring.style.borderColor = 'rgba(176, 141, 87, 0.6)';
-            });
-            el.addEventListener('mouseleave', () => {
-                ring.style.width = '45px';
-                ring.style.height = '45px';
-                ring.style.background = 'transparent';
-                ring.style.borderColor = 'rgba(176, 141, 87, 0.3)';
-            });
-        });
-
-        /* =========================================
-           TEXT SCRAMBLE EFFECT
-        ========================================= */
-        class TextScramble {
-            constructor(el) {
-                this.el = el;
-                this.chars = '!<>-_\\\\/[]{}—=+*^?#________';
-                this.update = this.update.bind(this);
-            }
-            setText(newText) {
-                const oldText = this.el.innerText;
-                const length = Math.max(oldText.length, newText.length);
-                const promise = new Promise((resolve) => this.resolve = resolve);
-                this.queue = [];
-                for (let i = 0; i < length; i++) {
-                    const from = oldText[i] || '';
-                    const to = newText[i] || '';
-                    const start = Math.floor(Math.random() * 40);
-                    const end = start + Math.floor(Math.random() * 40);
-                    this.queue.push({ from, to, start, end });
-                }
-                cancelAnimationFrame(this.frameRequest);
-                this.frame = 0;
-                this.update();
-                return promise;
-            }
-            update() {
-                let output = '';
-                let complete = 0;
-                for (let i = 0, n = this.queue.length; i < n; i++) {
-                    let { from, to, start, end, char } = this.queue[i];
-                    if (this.frame >= end) {
-                        complete++;
-                        output += to;
-                    } else if (this.frame >= start) {
-                        if (!char || Math.random() < 0.28) {
-                            char = this.randomChar();
-                            this.queue[i].char = char;
-                        }
-                        output += `<span class="dull">${char}</span>`;
-                    } else {
-                        output += from;
-                    }
-                }
-                this.el.innerHTML = output;
-                if (complete === this.queue.length) {
-                    this.resolve();
-                } else {
-                    this.frameRequest = requestAnimationFrame(this.update);
-                    this.frame++;
-                }
-            }
-            randomChar() {
-                return this.chars[Math.floor(Math.random() * this.chars.length)];
-            }
-        }
-
-        /* =========================================
-           INTERACTIONS & HOVER LOGIC
-        ========================================= */
-        const descText = document.getElementById('desc-text');
-        const launchBtn = document.getElementById('launch-btn');
-        const scrambler = new TextScramble(descText);
-        let targetVelo = 0.0;
-
-        document.querySelectorAll('.list-item').forEach((item, index) => {
-            item.addEventListener('mouseenter', () => {
-                scrambler.setText(tools[index].desc);
-                launchBtn.href = tools[index].url;
-                gsap.to(launchBtn, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' });
-                targetVelo = 1.3;
-            });
-            
-            item.addEventListener('mouseleave', () => {
-                targetVelo = 0.0;
-            });
-        });
-
-        /* =========================================
-           SMOOTH SCROLL (LENIS)
-        ========================================= */
-        const lenis = new Lenis({
-            duration: 1.4,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            smooth: true,
-        });
-
-        function raf(time) {
-            lenis.raf(time);
-            requestAnimationFrame(raf);
-        }
-        requestAnimationFrame(raf);
-
-        /* =========================================
-           WEBGL LIQUID PEARL SHADER
-        ========================================= */
-        const canvas = document.getElementById('glcanvas');
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-        const scene = new THREE.Scene();
-        const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-
-        const vertexShader = `
-            varying vec2 vUv;
-            void main() {
-                vUv = uv;
-                gl_Position = vec4(position, 1.0);
-            }
-        `;
-
-        const fragmentShader = `
-            uniform float uTime;
-            uniform vec2 uResolution;
-            uniform vec2 uMouse;
-            uniform float uVelo;
-            varying vec2 vUv;
-
-            vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
-            float snoise(vec2 v){
-              const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
-              vec2 i  = floor(v + dot(v, C.yy) );
-              vec2 x0 = v -   i + dot(i, C.xx);
-              vec2 i1;
-              i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
-              vec4 x12 = x0.xyxy + C.xxzz;
-              x12.xy -= i1;
-              i = mod(i, 289.0);
-              vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 )) + i.x + vec3(0.0, i1.x, 1.0 ));
-              vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
-              m = m*m ; m = m*m ;
-              vec3 x = 2.0 * fract(p * C.www) - 1.0;
-              vec3 h = abs(x) - 0.5;
-              vec3 ox = floor(x + 0.5);
-              vec3 a0 = x - ox;
-              m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
-              vec3 g;
-              g.x  = a0.x  * x0.x  + h.x  * x0.y;
-              g.yz = a0.yz * x12.xz + h.yz * x12.yw;
-              return 130.0 * dot(m, g);
-            }
-
-            void main() {
-                vec2 st = gl_FragCoord.xy / uResolution.xy;
-                st.x *= uResolution.x / uResolution.y;
-
-                vec2 mouse = uMouse;
-                mouse.x *= uResolution.x / uResolution.y;
-                
-                float dist = distance(st, mouse);
-                float interaction = exp(-dist * 4.5) * uVelo;
-
-                vec2 q = vec2(0.0);
-                q.x = snoise(st * 1.3 + uTime * 0.04);
-                q.y = snoise(st * 1.3 + vec2(3.0));
-
-                vec2 r = vec2(0.0);
-                r.x = snoise(st * 2.0 + q * 2.0 + uTime * 0.08 + interaction * 0.5);
-                r.y = snoise(st * 2.0 + q * 2.0 + uTime * 0.06 - interaction * 0.5);
-
-                float f = snoise(st * 2.5 + r * 1.5);
-
-                // Pearl Ivory Villa Palette - Slightly warmer
-                vec3 base = vec3(0.98, 0.97, 0.95); 
-                vec3 shadow = vec3(0.93, 0.91, 0.88);
-                vec3 highlight = vec3(1.0, 1.0, 1.0);
-
-                vec3 color = mix(base, shadow, clamp(f*f*2.0, 0.0, 1.0));
-                color = mix(color, highlight, clamp(length(q)*1.2, 0.0, 1.0));
-
-                // Minimal Iridescence in interaction
-                vec3 irid = vec3(
-                    0.5 + 0.5 * cos(f * 4.0 + 0.0),
-                    0.5 + 0.5 * cos(f * 4.0 + 2.0),
-                    0.5 + 0.5 * cos(f * 4.0 + 4.0)
-                );
-                color = mix(color, irid, 0.04 * interaction);
-
-                gl_FragColor = vec4(color, 1.0);
-            }
-        `;
-
-        const geometry = new THREE.PlaneGeometry(2, 2);
-        const material = new THREE.ShaderMaterial({
-            uniforms: {
-                uTime: { value: 0 },
-                uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-                uMouse: { value: new THREE.Vector2(0.5, 0.5) },
-                uVelo: { value: 0.0 }
-            },
-            vertexShader,
-            fragmentShader
-        });
-
-        const mesh = new THREE.Mesh(geometry, material);
-        scene.add(mesh);
-
-        let glMouse = new THREE.Vector2(0.5, 0.5);
-        let targetGlMouse = new THREE.Vector2(0.5, 0.5);
-        let currentVelo = 0;
-
-        window.addEventListener('mousemove', (e) => {
-            targetGlMouse.x = e.clientX / window.innerWidth;
-            targetGlMouse.y = 1.0 - (e.clientY / window.innerHeight);
-        });
-
-        window.addEventListener('resize', () => {
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            material.uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
-        });
-
-        const clockGL = new THREE.Clock();
-        function animateGL() {
-            glMouse.lerp(targetGlMouse, 0.04);
-            currentVelo += (targetVelo - currentVelo) * 0.04;
-            material.uniforms.uTime.value = clockGL.getElapsedTime();
-            material.uniforms.uMouse.value.copy(glMouse);
-            material.uniforms.uVelo.value = currentVelo;
-            renderer.render(scene, camera);
-            requestAnimationFrame(animateGL);
-        }
-        animateGL();
-
-        /* =========================================
-           LOADER & REVEAL
-        ========================================= */
-        let progress = 0;
-        const loaderPercent = document.querySelector('.loader-percent');
-        const loader = document.querySelector('.loader');
-
-        const interval = setInterval(() => {
-            progress += Math.floor(Math.random() * 12) + 1;
-            if(progress >= 100) {
-                progress = 100;
-                clearInterval(interval);
-                
-                setTimeout(() => {
-                    gsap.to(loader, { yPercent: -100, duration: 1.5, ease: 'expo.inOut' });
-                    gsap.fromTo('.item-title', 
-                        { y: 120, opacity: 0 }, 
-                        { y: 0, opacity: 1, duration: 1.4, stagger: 0.1, ease: 'power4.out', delay: 0.5 }
-                    );
-                    gsap.fromTo('.nav-top', { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 1.2, delay: 0.8, ease: 'power3.out' });
-                    gsap.fromTo('#fixed-detail', { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 1.2, delay: 1.1, ease: 'power3.out' });
-                }, 150);
-            }
-            loaderPercent.innerText = progress.toString().padStart(3, '0');
-        }, 25);
-
+        setInterval(updateTime, 1000);
+        updateTime();
     </script>
 </body>
 </html>
